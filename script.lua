@@ -65,7 +65,9 @@ AutoTab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.autoFarm = Value
-        if Value then AutoFarm() end
+        if Value then
+            coroutine.wrap(AutoFarm)()
+        end
     end
 })
 
@@ -74,7 +76,9 @@ AutoTab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.autoSell = Value
-        if Value then AutoSell() end
+        if Value then
+            coroutine.wrap(AutoSell)()
+        end
     end
 })
 
@@ -83,7 +87,9 @@ AutoTab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.autoBuy = Value
-        if Value then AutoBuy() end
+        if Value then
+            coroutine.wrap(AutoBuy)()
+        end
     end
 })
 
