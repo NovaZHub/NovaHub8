@@ -1,9 +1,7 @@
-local allowedPlaceIds = {
-    [10622089237] = true -- Grow a Garden
-}
-
-if not allowedPlaceIds[game.PlaceId] then
+if game.PlaceId ~= 10622089237 then
     game.Players.LocalPlayer:Kick("Esse script só funciona em Grow a Garden.")
+else
+    print("Você está no Grow a Garden! Script funcionando.")
 end
 
 -- Carrega a Orion Library
@@ -27,7 +25,9 @@ function AutoFarm()
     while _G.autoFarm do
         for _, v in pairs(workspace:GetDescendants()) do
             if v.Name == "ClickDetector" and v.Parent:FindFirstChild("Crop") then
-                fireclickdetector(v)
+                pcall(function()
+                    fireclickdetector(v)
+                end)
             end
         end
         wait(2)
