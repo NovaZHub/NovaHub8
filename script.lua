@@ -1,121 +1,75 @@
--- Verificação de jogo correto
-if game.PlaceId ~= 126884695634066 then
-    return game.Players.LocalPlayer:Kick("Este script só funciona no Grow a Garden.")
-end
-
--- Carregar a biblioteca Orion
+-- Carrega a biblioteca Orion
 local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
 
--- Criar a janela principal
+-- Cria a janela principal
 local Window = OrionLib:MakeWindow({
-    Name = "Novax | Grow a Garden",
-    HidePremium = false,
-    SaveConfig = true,
-    ConfigFolder = "NovaxGrowConfig"
+	Name = "Nova Hub 2.0",
+	HidePremium = false,
+	SaveConfig = true,
+	ConfigFolder = "NovaHubConfig",
+	Icon = "rbxassetid://7797712589"
 })
 
--- Variáveis de controle
-_G.autoFarm = false
-_G.autoSell = false
-_G.autoBuy = false
-
--- Função de Auto Farm
-function AutoFarm()
-    while _G.autoFarm do
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("ClickDetector") and v.Parent:FindFirstChild("Crop") then
-                pcall(function()
-                    fireclickdetector(v)
-                end)
-            end
-        end
-        task.wait(2)
-    end
-end
-
--- Função de Auto Sell
-function AutoSell()
-    while _G.autoSell do
-        pcall(function()
-            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer("Sell")
-        end)
-        task.wait(5)
-    end
-end
-
--- Função de Auto Buy
-function AutoBuy()
-    while _G.autoBuy do
-        pcall(function()
-            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer("Buy", "Seed")
-        end)
-        task.wait(10)
-    end
-end
-
--- 🧪 Aba: Auto Farm
-local AutoTab = Window:MakeTab({
-    Name = "Auto Farm",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
+-- Notificação ao iniciar
+OrionLib:MakeNotification({
+	Name = "Nova Hub 2.0",
+	Content = "Bem-vindo ao Nova Hub!",
+	Image = "rbxassetid://7797712589",
+	Time = 5
 })
 
-AutoTab:AddToggle({
-    Name = "Auto Farm (Plantar + Colher)",
-    Default = false,
-    Callback = function(Value)
-        _G.autoFarm = Value
-        if Value then
-            coroutine.wrap(AutoFarm)()
-        end
-    end
+-- Aba de Auto Farm
+local FarmTab = Window:MakeTab({
+	Name = "🌽 Auto Farm",
+	Icon = "rbxassetid://6035078882",
+	PremiumOnly = false
 })
 
-AutoTab:AddToggle({
-    Name = "Auto Sell",
-    Default = false,
-    Callback = function(Value)
-        _G.autoSell = Value
-        if Value then
-            coroutine.wrap(AutoSell)()
-        end
-    end
+FarmTab:AddToggle({
+	Name = "Ativar Auto Farm",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoFarm = Value
+		while _G.AutoFarm and task.wait(1) do
+			print("🌱 Farmando...")
+		end
+	end
 })
 
-AutoTab:AddToggle({
-    Name = "Auto Buy Seeds",
-    Default = false,
-    Callback = function(Value)
-        _G.autoBuy = Value
-        if Value then
-            coroutine.wrap(AutoBuy)()
-        end
-    end
+FarmTab:AddButton({
+	Name = "Vender Tudo 💰",
+	Callback = function()
+		print("💰 Vendendo tudo...")
+	end
 })
 
--- 🛡️ Anti-AFK
-AutoTab:AddButton({
-    Name = "Ativar Anti-AFK",
-    Callback = function()
-        local vu = game:GetService("VirtualUser")
-        game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-            task.wait(1)
-            vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-        end)
-        OrionLib:MakeNotification({
-            Name = "Anti-AFK Ativado",
-            Content = "Você não será desconectado por inatividade.",
-            Time = 5
-        })
-    end
+-- Aba de Configurações
+local ConfigTab = Window:MakeTab({
+	Name = "⚙️ Configurações",
+	Icon = "rbxassetid://6031280882",
+	PremiumOnly = false
 })
 
--- 📌 Créditos
-local CreditTab = Window:MakeTab({
-    Name = "Créditos",
-    Icon = "rbxassetid://7733658504",
-    PremiumOnly = false
+ConfigTab:AddSlider({
+	Name = "Velocidade da Farm",
+	Min = 0.1,
+	Max = 5,
+	Default = 1,
+	Increment = 0.1,
+	ValueName = "s",
+	Callback = function(Value)
+		print("Velocidade: " .. Value)
+	end
 })
 
-CreditTab:AddParagraph("Feito por:", "NovaxHuv com base no Tbao Hub")
+-- Aba de Créditos
+local CreditsTab = Window:MakeTab({
+	Name = "👑 Créditos",
+	Icon = "rbxassetid://6031280886",
+	PremiumOnly = false
+})
+
+CreditsTab:AddParagraph("Créditos", "Feito por você 😎")
+
+-- Iniciar a interface
+OrionLib:Init()
