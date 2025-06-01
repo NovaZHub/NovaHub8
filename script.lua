@@ -1,13 +1,12 @@
-if game.PlaceId ~= 10622089237 then
-    game.Players.LocalPlayer:Kick("Esse script só funciona em Grow a Garden.")
-else
-    print("Você está no Grow a Garden! Script funcionando.")
-end
+-- Kick desativado para teste (descomente quando tiver certeza do PlaceId correto)
+-- if game.PlaceId ~= 10622089237 then
+--     game.Players.LocalPlayer:Kick("Esse script só funciona em Grow a Garden.")
+-- end
+print("Kick desativado temporariamente para teste")
 
 -- Carrega a Orion Library
 local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
 
--- Janela principal
 local Window = OrionLib:MakeWindow({
     Name = "Novax | Grow a Garden",
     HidePremium = false,
@@ -15,47 +14,56 @@ local Window = OrionLib:MakeWindow({
     ConfigFolder = "NovaxGrowConfig"
 })
 
--- Variáveis
 _G.autoFarm = false
 _G.autoSell = false
 _G.autoBuy = false
 
--- Funções
 function AutoFarm()
-    while _G.autoFarm do
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v.Name == "ClickDetector" and v.Parent:FindFirstChild("Crop") then
-                pcall(function()
-                    fireclickdetector(v)
-                end)
+    spawn(function()
+        while _G.autoFarm do
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v.Name == "ClickDetector" and v.Parent:FindFirstChild("Crop") then
+                    pcall(function()
+                        fireclickdetector(v)
+                    end)
+                    wait(0.3) -- espera um pouco para não spammer o clique
+                end
             end
+            wait(2)
         end
-        wait(2)
-    end
+    end)
 end
 
 function AutoSell()
-    while _G.autoSell do
-        local args = {
-            [1] = "Sell"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer(unpack(args))
-        wait(5)
-    end
+    spawn(function()
+        while _G.autoSell do
+            local args = {"Sell"}
+            local success, err = pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer(unpack(args))
+            end)
+            if not success then
+                warn("Erro ao tentar vender:", err)
+            end
+            wait(5)
+        end
+    end)
 end
 
 function AutoBuy()
-    while _G.autoBuy do
-        local args = {
-            [1] = "Buy",
-            [2] = "Seed"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer(unpack(args))
-        wait(10)
-    end
+    spawn(function()
+        while _G.autoBuy do
+            local args = {"Buy", "Seed"}
+            local success, err = pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):FireServer(unpack(args))
+            end)
+            if not success then
+                warn("Erro ao tentar comprar sementes:", err)
+            end
+            wait(10)
+        end
+    end)
 end
 
--- Aba: Automação
 local Tab = Window:MakeTab({
     Name = "Auto Farm",
     Icon = "rbxassetid://4483345998",
@@ -95,7 +103,6 @@ Tab:AddToggle({
     end
 })
 
--- Anti-AFK
 Tab:AddButton({
     Name = "Ativar Anti-AFK",
     Callback = function()
@@ -113,7 +120,6 @@ Tab:AddButton({
     end
 })
 
--- Créditos
 local CreditTab = Window:MakeTab({
     Name = "Créditos",
     Icon = "rbxassetid://7733658504",
