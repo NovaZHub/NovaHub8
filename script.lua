@@ -1,5 +1,9 @@
-if game.PlaceId ~= 10622089237 then
-    return game.Players.LocalPlayer:Kick("Esse script só funciona em Grow a Garden.")
+local allowedPlaceIds = {
+    [10622089237] = true -- Grow a Garden
+}
+
+if not allowedPlaceIds[game.PlaceId] then
+    game.Players.LocalPlayer:Kick("Esse script só funciona em Grow a Garden.")
 end
 
 -- Carrega a Orion Library
@@ -21,7 +25,6 @@ _G.autoBuy = false
 -- Funções
 function AutoFarm()
     while _G.autoFarm do
-        -- Tente executar as funções de colher e plantar
         for _, v in pairs(workspace:GetDescendants()) do
             if v.Name == "ClickDetector" and v.Parent:FindFirstChild("Crop") then
                 fireclickdetector(v)
@@ -52,7 +55,7 @@ function AutoBuy()
     end
 end
 
--- 🧪 ABA: Automação
+-- Aba: Automação
 local Tab = Window:MakeTab({
     Name = "Auto Farm",
     Icon = "rbxassetid://4483345998",
@@ -92,7 +95,7 @@ Tab:AddToggle({
     end
 })
 
--- 🛡️ Anti-AFK
+-- Anti-AFK
 Tab:AddButton({
     Name = "Ativar Anti-AFK",
     Callback = function()
